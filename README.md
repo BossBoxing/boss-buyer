@@ -1,6 +1,6 @@
 # BOSS-BUYER
 
-BOSS-BUYER is a FiveM script designed to create NPC-based item-selling functionality. Players can interact with NPCs to sell specific items at dynamic prices. Each NPC has a unique set of items they accept, adding variety and depth to the gameplay.
+BOSS-BUYER is a RedM script designed to create NPC-based item-selling functionality. Players can interact with NPCs to sell specific items at dynamic prices. Each NPC has a unique set of items they accept, adding variety and depth to the gameplay.
 
 ---
 

@@ -9,9 +9,9 @@ local function CreateBlip(blipData)
     SetBlipSprite(blip, blipData.sprite, true)
     SetBlipScale(blip, 0.8)
     Citizen.InvokeNative(0x9CB1A1623062F402, blip, blipData.name)
-    if blipData.color then
-        SetBlipColour(blip, blipData.color)
-    end
+    -- if blipData.color then
+        -- SetBlipColour(blip, blipData.color)
+    -- end
     return blip
 end
 
@@ -27,7 +27,7 @@ CreateThread(function()
 
             -- Spawn NPC
             if distance < Config.DistanceSpawn and not spawnedPeds[k] then
-                local spawnedPed = CreateNPC(v.model, v.location)
+                local spawnedPed = CreateNPC(v.model, v.location, v)
                 spawnedPeds[k] = { spawnedPed = spawnedPed }
             end
 
@@ -52,52 +52,53 @@ CreateThread(function()
     while true do
         Wait(1000)
         for k, v in pairs(Config.NPCs) do
-            local playerCoords = GetEntityCoords(PlayerPedId())
-            local distance = #(playerCoords - vector3(v.location.x, v.location.y, v.location.z))
+            -- local playerCoords = GetEntityCoords(PlayerPedId())
+            -- local distance = #(playerCoords - vector3(v.location.x, v.location.y, v.location.z))
 
-            -- Create Blip
-            if distance < Config.DistanceSpawn and not blips[k] then
+            if not blips[k] then
                 if v.blip then
                     blips[k] = CreateBlip(v.blip)
                 end
             end
 
-            -- Remove Blip
-            if distance >= Config.DistanceSpawn and blips[k] then
-                RemoveBlip(blips[k])
-                blips[k] = nil
-            end
+            -- -- Create Blip
+            -- if distance < Config.DistanceSpawn and not blips[k] then
+            --     if v.blip then
+            --         blips[k] = CreateBlip(v.blip)
+            --     end
+            -- end
+
+            -- -- Remove Blip
+            -- if distance >= Config.DistanceSpawn and blips[k] then
+            --     RemoveBlip(blips[k])
+            --     blips[k] = nil
+            -- end
         end
     end
 end)
 
-function CreateNPC(model, location)
+function CreateNPC(model, location, npcData)
     RequestModel(model)
     while not HasModelLoaded(model) do
         Wait(50)
     end
-
     local ped = CreatePed(model, location.x, location.y, location.z - 1.0, location.w, false, false, 0, 0)
-    
-    -- Ensure the ped is visible by default
-    SetEntityAlpha(ped, 255, false)
+    SetEntityAlpha(ped, 0, false)
+    SetRandomOutfitVariation(ped, true)
+    SetEntityCanBeDamaged(ped, false)
     SetEntityInvincible(ped, true)
     FreezeEntityPosition(ped, true)
     SetBlockingOfNonTemporaryEvents(ped, true)
 
-    -- Assign NPC to a predefined relationship group
-    SetPedRelationshipGroupHash(ped, GetHashKey("NPC_GROUP"))
-    SetRelationshipBetweenGroups(1, GetHashKey("NPC_GROUP"), `PLAYER`)
+    -- Relationship group setup
+    SetPedRelationshipGroupHash(ped, GetPedRelationshipGroupHash(ped))
+    SetRelationshipBetweenGroups(1, GetPedRelationshipGroupHash(ped), `PLAYER`)
 
-    -- Fade in effect if enabled
     if Config.FadeIn then
         for i = 0, 255, 51 do
             Wait(50)
             SetEntityAlpha(ped, i, false)
         end
-    else
-        -- Ensure ped is fully visible if fade-in is disabled
-        SetEntityAlpha(ped, 255, false)
     end
 
     -- Target setup
@@ -108,7 +109,7 @@ function CreateNPC(model, location)
                     icon = "fas fa-money-bill-wave",
                     label = "Sell Items",
                     action = function()
-                        OpenSellMenu()
+                        OpenSellMenu(npcData.items) -- Pass items specific to this NPC
                     end
                 },
             },
@@ -151,7 +152,7 @@ function OpenSellMenu(npcItems)
         local randomPrice = GetRandomPrice(item.basePrice)
         table.insert(options, {
             title = item.label,
-            description = string.format("Sell for $%d each", randomPrice),
+            description = "Click to Sell", -- string.format("Click to Sell", randomPrice),
             event = "boss-buyer:wantToSell",
             args = { item = item.name, price = randomPrice } -- Pass random price to the server
         })

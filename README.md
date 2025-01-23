@@ -18,9 +18,9 @@ BOSS-BUYER is a RedM script designed to create NPC-based item-selling functional
 
 ## Requirements
 
-- **[rsg-core](https://github.com/rsg-core)**
-- **[rsg-target](https://github.com/rsg-target)**
-- **[ox_lib](https://overextended.github.io/ox_lib/)**
+- **[rsg-core](https://github.com/Rexshack-RedM/rsg-core)**
+- **[rsg-target](https://github.com/Rexshack-RedM/rsg-target)**
+- **[ox_lib](https://github.com/overextended/ox_lib)**
 
 ---
 

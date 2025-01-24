@@ -26,4 +26,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tag_name: "v${{ github.run_number }}"  # Using run_number as the tag
+          release_name: "Release v${{ github.run_number }}"
           files: boss-buyer.zip

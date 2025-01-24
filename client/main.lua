@@ -4,14 +4,11 @@ local blips = {}
 
 -- Utility function to create blips
 local function CreateBlip(blipData)
-    local blipStyle = GetHashKey("BLIP_STYLE_DEBUG_GREEN")
-    local blip = Citizen.InvokeNative(0x554D9D53F696D002, blipStyle, blipData.location.x, blipData.location.y, blipData.location.z)
-    SetBlipSprite(blip, blipData.sprite, true)
+    local blip = BlipAddForCoords(1664425300, blipData.location)
+    SetBlipSprite(blip, joaat(blipData.sprite), true)
     SetBlipScale(blip, 0.8)
-    Citizen.InvokeNative(0x9CB1A1623062F402, blip, blipData.name)
-    -- if blipData.color then
-        -- SetBlipColour(blip, blipData.color)
-    -- end
+    SetBlipName(blip, blipData.name)
+    BlipAddModifier(blip, joaat('BLIP_MODIFIER_MP_COLOR_8'))
     return blip
 end
 

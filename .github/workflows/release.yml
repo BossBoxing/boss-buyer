@@ -1,0 +1,40 @@
+name: Auto Release ZIP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Create Release with ZIP
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies (if needed)
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20  # Use your Node.js version
+          cache: 'npm'
+
+      # Step 3: Prepare ZIP file
+      - name: Create ZIP file
+        run: |
+          zip -r boss-buyer.zip .
+
+      # Step 4: Publish Release
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}  # Incremental tag
+          release_name: "Release ${{ github.run_number }}"
+          draft: false
+          prerelease: false
+          files: boss-buyer.zip
